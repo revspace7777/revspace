@@ -80,12 +80,11 @@
          * @param {Array} files - The array of file objects from the GitHub API.
          */
         function displayFiles(files) {
-            // Clear the loading message
             fileListElement.innerHTML = '';
 
-            // Filter for .md and .html files, excluding index.html
+            // Filter for .md files, excluding any README.md
             const filteredFiles = files.filter(file =>
-                (file.name.endsWith('.md') || file.name.endsWith('.html')) && file.name.toLowerCase() !== 'index.html'
+                file.name.endsWith('.md') && file.name.toLowerCase() !== 'readme.md'
             );
 
             if (filteredFiles.length === 0) {
@@ -93,16 +92,17 @@
                 return;
             }
 
-            // Create and append a link for each file
             filteredFiles.forEach(file => {
                 const listItem = document.createElement('div');
                 listItem.className = 'link-item rounded-lg';
 
                 const link = document.createElement('a');
-                link.href = file.name;
-                link.className = 'block p-4 rounded-lg text-lg';
                 
-                // Create a human-friendly name from the filename
+                // Link to the post template, passing the filename (without .md) as a parameter
+                const slug = file.name.replace(/\.md$/i, '');
+                link.href = `post.html?p=${slug}`;
+                
+                link.className = 'block p-4 rounded-lg text-lg';
                 link.textContent = formatFileName(file.name);
 
                 listItem.appendChild(link);
@@ -118,7 +118,7 @@
          */
         function formatFileName(filename) {
             return filename
-                .replace(/\.(md|html)$/i, '') // Remove .md or .html extension
+                .replace(/\.md$/i, '')       // Remove .md extension
                 .replace(/[-_]/g, ' ')       // Replace hyphens and underscores with spaces
                 .toLowerCase();              // Convert to lowercase
         }
@@ -129,4 +129,3 @@
 
 </body>
 </html>
-
